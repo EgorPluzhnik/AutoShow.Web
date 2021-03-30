@@ -1,14 +1,20 @@
 package com.web.autoshow.controllers;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import com.web.autoshow.models.ExampleModel;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-
-@Controller
+@RestController
+@Api
 public class ExampleController {
-    @GetMapping("/hello")
+
+    @GetMapping("/")
+    public ExampleModel start(){
+        return new ExampleModel(555, "Hello!");
+    }
+
+    /*@GetMapping("/hello")
     public String hello(Model model) {
         ArrayList<String> list = new ArrayList<>();
         list.add("React");
@@ -21,5 +27,5 @@ public class ExampleController {
     @GetMapping("/goodbye")
     public String goodbye() {
         return "../templates/examples/goodbye.html";
-    }
+    }*/
 }
