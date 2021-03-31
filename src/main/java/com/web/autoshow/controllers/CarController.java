@@ -12,31 +12,31 @@ import java.util.*;
 @RequestMapping("/cars")
 @CrossOrigin(origins = "http://localhost:3000/", allowCredentials = "true")
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
-public class CarsController {
+public class CarController {
     private final CarDTO exampleCar = new CarDTO(6, new ByteArray(5), "Ferrari F40",
             "First race car in the world!", new Date(4213123123L));
 
     @GetMapping
     public List<CarDTO> GetAllCarInfo() {
-        ArrayList<CarDTO> result = new ArrayList<>();
+        var result = new ArrayList<CarDTO>();
         result.add(exampleCar);
         result.add(exampleCar);
         return result;
     }
 
     @PostMapping
-    public void AddCar(@RequestBody CarDTO car) {
+    public void addCar(@RequestBody CarDTO car) {
 
     }
 
     @GetMapping("/{id}")
-    public CarDTO GetCarInfo(@PathVariable int id) {
+    public CarDTO getCarInfo(@PathVariable int id) {
         return new CarDTO(id, exampleCar.getImage(), exampleCar.getModel(),
                 exampleCar.getDescription(), exampleCar.getReleaseDate());
     }
 
     @DeleteMapping("/{id}")
-    public void DeleteCar(@PathVariable int id){
+    public void deleteCar(@PathVariable int id){
 
     }
 }

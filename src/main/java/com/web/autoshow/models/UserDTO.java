@@ -2,14 +2,14 @@ package com.web.autoshow.models;
 
 import com.web.autoshow.Sex;
 
-public class UserGetDTO {
+public class UserDTO {
     private final String name;
     private final String surname;
     private final String phoneNumber;
     private final String email;
     private final Sex sex;
 
-    public UserGetDTO(String name, String surname, String phoneNumber, String email, Sex sex) {
+    public UserDTO(String name, String surname, String phoneNumber, String email, Sex sex) {
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
