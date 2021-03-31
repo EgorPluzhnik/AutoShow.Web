@@ -2,12 +2,16 @@ package com.web.autoshow.controllers;
 
 import com.sun.mail.iap.ByteArray;
 import com.web.autoshow.models.CarDTO;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
 @RequestMapping("/cars")
+@CrossOrigin(origins = "http://localhost:3000/", allowCredentials = "true")
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 public class CarsController {
     private final CarDTO exampleCar = new CarDTO(6, new ByteArray(5), "Ferrari F40",
             "First race car in the world!", new Date(4213123123L));
