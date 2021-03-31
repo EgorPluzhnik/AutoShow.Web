@@ -1,8 +1,8 @@
 package com.web.autoshow.controllers;
 
 import com.google.gson.Gson;
-import com.web.autoshow.dao.PersonDAO;
-import com.web.autoshow.models.Person;
+import com.web.autoshow.dao.UserDAO;
+import com.web.autoshow.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,27 +10,29 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/people")
+@RequestMapping("/user")
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
-public class PeopleController {
+public class UserController {
 
-  private final PersonDAO personDAO;
+  private final UserDAO userDAO;
 
   @Autowired
-  public PeopleController(PersonDAO personDAO) {
-    this.personDAO = personDAO;
+  public UserController(UserDAO userDAO) {
+    this.userDAO = userDAO;
   }
 
   @GetMapping("/{id}")
-  public Person add(@PathVariable("id") Long id) {
-    return personDAO.getPerson(id);
+  public User add(@PathVariable("id") Long id) {
+
+    return userDAO.getPerson(id);
   }
 
   @PostMapping()
   public String add(HttpServletRequest request) throws IOException {
     // Чтобы распарсить payload и сразу же создать объект
-    Person person = new Gson().fromJson(request.getReader(), Person.class);
-    personDAO.add(person);
+    User person = new User("123", 22, "123");
+
+    userDAO.add(person);
     return "Done";
   }
 }

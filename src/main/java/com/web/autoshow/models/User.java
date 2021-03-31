@@ -3,11 +3,9 @@ package com.web.autoshow.models;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Entity
-@Table(schema = "public")
-public class Person {
+public class User {
 
   @Id
   @GeneratedValue
@@ -16,20 +14,20 @@ public class Person {
   private int age;
   private String email;
 
-  public Person() {
+  public User() {
   }
 
-  public Person(String name, int age, String email) {
+  public User(String name, int age, String email) {
     this.name = name;
     this.age = age;
     this.email = email;
   }
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
