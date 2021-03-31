@@ -1,6 +1,6 @@
 package com.web.autoshow.controllers;
 
-import com.web.autoshow.models.UserAuthPostDTO;
+import com.web.autoshow.dto.UserAuthPostDTO;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

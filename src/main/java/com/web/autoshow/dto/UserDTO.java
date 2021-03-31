@@ -1,6 +1,6 @@
-package com.web.autoshow.models;
+package com.web.autoshow.dto;
 
-import com.web.autoshow.Sex;
+import com.web.autoshow.common.Sex;
 
 public class UserDTO {
     private final String name;

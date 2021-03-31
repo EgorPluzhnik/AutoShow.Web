@@ -1,4 +1,4 @@
-package com.web.autoshow;
+package com.web.autoshow.common;
 
 public enum Sex {
     Male,

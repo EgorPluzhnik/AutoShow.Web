@@ -1,9 +1,9 @@
 package com.web.autoshow.controllers;
 
-import com.web.autoshow.Sex;
+import com.web.autoshow.common.Sex;
 import com.web.autoshow.dao.UserDAO;
 import com.web.autoshow.models.User;
-import com.web.autoshow.models.UserDTO;
+import com.web.autoshow.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

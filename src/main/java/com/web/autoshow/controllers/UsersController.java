@@ -1,12 +1,10 @@
 package com.web.autoshow.controllers;
 
-import com.web.autoshow.Message;
-import com.web.autoshow.Sex;
-import com.web.autoshow.models.UserGetDTO;
-import com.web.autoshow.models.UserPostDTO;
+import com.web.autoshow.common.Message;
+import com.web.autoshow.common.Sex;
+import com.web.autoshow.dto.UserAuthPostDTO;
+import com.web.autoshow.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -19,15 +17,32 @@ import java.util.Arrays;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class UsersController {
 
+    // Имеем две БД
+    // 1 - Auth, хранящая логин и пароль и собственный первичный ключ (pk) и pk user
+    // 2 - User: name, phone, email, etc... и свой pk тоже
+
     @PostMapping("/login")
-    public String AuthorizeUser(@RequestBody UserPostDTO userAuthDto,
-                                 //@Autowired Message message,
+    public Message AuthorizeUser(@RequestBody UserAuthPostDTO userAuthPostDto,
+                                 @Autowired Message message, // @Autowired: ищет и передает бин Message в метод
                                  HttpServletRequest req,
                                  HttpServletResponse res) {
-        //message.setMessage("OK");
-        Cookie cookie = new Cookie("USER-ID", "1");
-        res.addCookie(cookie);
-        return "Done";
+
+        // Необязательно, оказывается, возвращать респонс в return, чтобы это работало :P
+        res.addCookie(new Cookie("USER-ID", "1"));
+
+        // Новый акк:
+        // Генерируем запись в таблице User
+        // Генерируем запись в таблице Auth: pk (наш UID будущий), login, password, userId (primary key)
+        // Получаем этот самый UID сгенерированной записи и ставим кукан, а потом можно и сесть на него. Танкисты же
+        // А ещё мы кроссфитеры
+
+        // Уже существующий акк (просто вход)
+        // По userAuthPostDto.login ищем запись в Auth. Сохраняем UID.
+        // В этой же записи по userId переходим на юзера и возвращаем мне все нужные данные о нём. Я рисую, затем, UI.
+        // Также, не забываем поставить этот UID в куки.
+
+        message.setMessage("OK");
+        return message;
     }
 
     @GetMapping("/me")
@@ -39,6 +54,10 @@ public class UsersController {
         }
         message.setMessage("Not Authorized");
         return message;
+
+        // В кукичах приходит UID, это pk (auth). По нему мы узнаем, есть ли хоть одна запись в БД с таким uid
+        // Да - красава, ты наш, ты танкист. return пробитие.exe
+        // Нет? Возвращаем "Not Authorized". И я делаю UI под это.
     }
 
     @DeleteMapping("/{id}")
@@ -46,14 +65,14 @@ public class UsersController {
 
     }
 
-    @GetMapping("/profile/{username}")
-    public UserGetDTO GetUserProfileInfo(@PathVariable String username, HttpServletRequest req) {
+    @GetMapping("/profile/{login}")
+    public UserDTO GetUserProfileInfo(@PathVariable String login, HttpServletRequest req) {
         Cookie[] cookies = req.getCookies();
-        // Обращаемся в бд и вычленяем ИД по username (надо и его хранить в БД)
-        // Далее из кукичей вычленяем тоже ИД и сравниваем его с тем, который мы получили по username из БД
+        // Обращаемся в БД и вычленяем ИД по login из таблицы auth, хранящая в себе pk, login, name, pk таблицы user
+        // Далее из кукичей получаем тоже ИД и сравниваем его с тем, который мы получили по username из БД
         // Если true, то возвращаем все нужные для UI данные. Например, хотим показать ему его аву, то вернём img, и прочее говно
         // Если false, то идёт он нахуй, мошенник ёбаный. Возвращаем просто message "Wrong profile", например,
         // И я в реакте сделаю редирект его на главную страницу, а ещё лучше нахуй закрою сайт
-        return new UserGetDTO("Егор", "Scala Джонсон", "8921223221", "egor_rock@scala.power", Sex.Male);
+        return new UserDTO("Егор", "Scala Джонсон", "8921223221", "egor_rock@scala.power", Sex.Male);
     }
 }

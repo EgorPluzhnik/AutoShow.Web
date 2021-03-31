@@ -1,10 +1,12 @@
-package com.web.autoshow;
+package com.web.autoshow.common;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component // Делаем бин из Message
 @Scope("prototype")
+// Scope("prototype") означает, что будет создаваться новый бин при каждой передаче его в методы.
+// Scope("singleton") (по умолчанию) - всего один раз
 public class Message {
   private String message;
 

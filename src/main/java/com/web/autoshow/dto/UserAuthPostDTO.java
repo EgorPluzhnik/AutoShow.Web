@@ -1,4 +1,4 @@
-package com.web.autoshow.models;
+package com.web.autoshow.dto;
 
 public class UserAuthPostDTO {
     private final String login;

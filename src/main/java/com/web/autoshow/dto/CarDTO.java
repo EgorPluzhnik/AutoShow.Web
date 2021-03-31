@@ -1,6 +1,7 @@
-package com.web.autoshow.models;
+package com.web.autoshow.dto;
 
 import com.sun.mail.iap.ByteArray;
+
 import java.util.Date;
 
 public class CarDTO {

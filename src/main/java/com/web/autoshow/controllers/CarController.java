@@ -1,7 +1,7 @@
 package com.web.autoshow.controllers;
 
 import com.sun.mail.iap.ByteArray;
-import com.web.autoshow.models.CarDTO;
+import com.web.autoshow.dto.CarDTO;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.web.bind.annotation.*;
