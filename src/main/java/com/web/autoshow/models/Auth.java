@@ -23,11 +23,11 @@ public class Auth {
 
   }
 
-  public long getUid() {
+  public long getPid() {
     return pid;
   }
 
-  public void setUid(long uid) {
+  public void setPid(long uid) {
     this.pid = uid;
   }
 

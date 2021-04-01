@@ -5,12 +5,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthUtils {
-  @Bean
-  public String cipher(long id) {
-    return "abc" + String.valueOf(id) + "cba";
+  public String cipher(long pid) {
+    return "abc" + String.valueOf(pid) + "cba";
   }
 
-  @Bean
   public long decipher(String value) {
     return Long.parseLong(value.replaceAll("abc", ""));
   }
