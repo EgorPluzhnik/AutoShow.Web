@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 @RestController
@@ -21,10 +22,19 @@ import java.util.Arrays;
 public class AuthController {
 
     private AuthDAO authDAO;
+    private Message message;
+    private AuthUtils authUtils;
 
     @PostMapping("/login")
-    public void login(@RequestBody AuthDTO authDTO) {
-        // Войти
+    public Message login(@RequestBody AuthDTO authDTO, HttpServletResponse res) {
+        long pid = authDAO.getPid(authDTO.getLogin(), authDTO.getPassword());
+        if (pid != -1) {
+            res.addCookie(new Cookie("PID", authUtils.cipher(pid)));
+            message.setMessage("Logged in");
+            return message;
+        }
+        message.setMessage("Wrong login or password");
+        return message;
     }
 
     @PutMapping("/login")
