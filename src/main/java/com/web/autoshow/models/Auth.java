@@ -23,6 +23,12 @@ public class Auth {
 
   }
 
+  public Auth(String login, String password, Person personId) {
+    this.login = login;
+    this.password = password;
+    this.personId = personId;
+  }
+
   public long getPid() {
     return pid;
   }

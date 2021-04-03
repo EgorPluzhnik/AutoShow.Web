@@ -30,4 +30,8 @@ public class AuthDAO {
 
         return -1;
     }
+
+    public void add(Auth auth) {
+        authRepository.save(auth);
+    }
 }

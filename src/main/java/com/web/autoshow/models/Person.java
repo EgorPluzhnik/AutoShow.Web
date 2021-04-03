@@ -24,6 +24,18 @@ public class Person {
 
   private Sex sex;
 
+  public Person() {
+
+  }
+
+  public Person(String name, String surname, String phoneNumber, String email, Sex sex) {
+    this.name = name;
+    this.surname = surname;
+    this.phoneNumber = phoneNumber;
+    this.email = email;
+    this.sex = sex;
+  }
+
   public long getId() {
     return id;
   }

@@ -1,7 +1,11 @@
 package com.web.autoshow.controllers;
 
 import com.web.autoshow.dao.AuthDAO;
+import com.web.autoshow.dao.PersonDAO;
 import com.web.autoshow.dto.AuthDTO;
+import com.web.autoshow.dto.PersonAuthDTO;
+import com.web.autoshow.models.Auth;
+import com.web.autoshow.models.Person;
 import com.web.autoshow.utils.AuthUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.logging.ErrorManager;
 
 @RestController
 @RequestMapping("/auth")
@@ -16,9 +21,11 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthController {
 
     private final AuthDAO authDAO;
+    private final PersonDAO personDAO;
 
-    public AuthController(AuthDAO authDAO) {
+    public AuthController(AuthDAO authDAO, PersonDAO personDAO) {
         this.authDAO = authDAO;
+        this.personDAO = personDAO;
     }
 
     @PostMapping("/login")
@@ -34,8 +41,21 @@ public class AuthController {
     }
 
     @PutMapping("/login")
-    public void register() {
-        // Зарегистрировать акк
+    public String register(@RequestBody PersonAuthDTO paDTO,
+                         HttpServletResponse res,
+                         @Autowired AuthUtils authUtils) {
+        try {
+            long pid = personDAO.add(new Person(paDTO.getName(), paDTO.getSurname(),
+                paDTO.getPhoneNumber(), paDTO.getEmail(), paDTO.getSex()));
+            authDAO.add(new Auth(paDTO.getLogin(), paDTO.getPassword(), personDAO.getPerson(pid)));
+            res.addCookie(new Cookie("PID",
+                authUtils.cipher(authDAO.getPid(paDTO.getLogin(), paDTO.getPassword()))));
+
+            return "Registered";
+        } catch (Exception e) {
+            return "Some error occurred";
+        }
+
     }
 
     @DeleteMapping("/login")
