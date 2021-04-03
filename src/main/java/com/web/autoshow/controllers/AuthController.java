@@ -7,12 +7,20 @@ import com.web.autoshow.dto.PersonAuthDTO;
 import com.web.autoshow.models.Auth;
 import com.web.autoshow.models.Person;
 import com.web.autoshow.utils.AuthUtils;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.openmbean.KeyAlreadyExistsException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Array;
+import java.rmi.AlreadyBoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.ErrorManager;
 
 @RestController
@@ -41,21 +49,26 @@ public class AuthController {
     }
 
     @PutMapping("/login")
-    public String register(@RequestBody PersonAuthDTO paDTO,
-                         HttpServletResponse res,
-                         @Autowired AuthUtils authUtils) {
-        try {
-            long pid = personDAO.add(new Person(paDTO.getName(), paDTO.getSurname(),
-                paDTO.getPhoneNumber(), paDTO.getEmail(), paDTO.getSex()));
-            authDAO.add(new Auth(paDTO.getLogin(), paDTO.getPassword(), personDAO.getPerson(pid)));
-            res.addCookie(new Cookie("PID",
-                authUtils.cipher(authDAO.getPid(paDTO.getLogin(), paDTO.getPassword()))));
+    public List<String> register(@RequestBody PersonAuthDTO paDTO,
+                                 HttpServletResponse res,
+                                 @Autowired AuthUtils authUtils) {
 
-            return "Registered";
-        } catch (Exception e) {
-            return "Some error occurred";
+        Person person = new Person(paDTO.getName(), paDTO.getSurname(), paDTO.getPhoneNumber(),
+            paDTO.getEmail(), paDTO.getSex());
+
+        List<String> duplicates = personDAO.findDuplicateFields(person);
+        if (duplicates.size() > 0) {
+            return duplicates;
         }
 
+        personDAO.add(person);
+        Auth auth = new Auth(paDTO.getLogin(), paDTO.getPassword(), personDAO.getPerson(person.getId()));
+        authDAO.add(auth);
+
+        res.addCookie(new Cookie("PID",
+            authUtils.cipher(authDAO.getPid(paDTO.getLogin(), paDTO.getPassword()))));
+
+        return new ArrayList<>(Collections.singletonList("Registered"));
     }
 
     @DeleteMapping("/login")

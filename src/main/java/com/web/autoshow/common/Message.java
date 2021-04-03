@@ -14,10 +14,12 @@
 //    this.message = message;
 //  }
 //
+//  @Bean
 //  public String getMessage() {
 //    return message;
 //  }
 //
+//  @Bean
 //  public void setMessage(String message) {
 //    this.message = message;
 //  }
