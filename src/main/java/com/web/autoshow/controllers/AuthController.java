@@ -17,10 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Array;
 import java.rmi.AlreadyBoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.ErrorManager;
 
 @RestController
@@ -93,8 +90,9 @@ public class AuthController {
 
     // Произвести авторизацию
     @GetMapping("/me")
-    public String checkPersonAuth(HttpServletRequest req,
+    public HashMap<String, Object> checkPersonAuth(HttpServletRequest req,
                                    @Autowired AuthUtils authUtils) {
+        HashMap<String, Object> result = new HashMap<>();
         // Находим саму куку с ключом PID.
         Cookie pidCookie = authUtils.findPidCookie(req.getCookies());
 
@@ -103,12 +101,20 @@ public class AuthController {
             if (!pidCookie.getValue().equals("")) {
                 // Получаем сам PID, расшифровывая запись из куки, используя утилиту decipher
                 long pid = authUtils.decipher(pidCookie.getValue());
-                // Проверяем, есть ли в БД зарегистрированный акк по такому ид.
-                if (authDAO.exists(pid)) {
-                    return "Authorized";
+                // Получаем авторизационную инфу об акке. Если такая есть, то возвращаем
+                // Логин, id пользователя
+                Auth auth = authDAO.getAuth(pid);
+                if (auth != null) {
+                    result.put("userId", auth.getPersonId());
+                    result.put("login", auth.getLogin());
+                    result.put("message", "Authorized");
+
+                    return result;
                 }
             }
         }
-        return "Not Authorized";
+        
+        result.put("message", "Not Authorized");
+        return result;
     }
 }

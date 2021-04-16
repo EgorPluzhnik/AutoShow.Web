@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class AuthDAO {
@@ -38,5 +39,12 @@ public class AuthDAO {
     // Добавить зарегистрированный акк в БД.
     public void add(Auth auth) {
         authRepository.save(auth);
+    }
+
+    public Auth getAuth(long pid) {
+        if (authRepository.existsById(pid)) {
+            return authRepository.findById(pid).get();
+        }
+        return null;
     }
 }

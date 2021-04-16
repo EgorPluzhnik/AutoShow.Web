@@ -33,23 +33,15 @@ public class Auth {
     return pid;
   }
 
-  public void setPid(long uid) {
-    this.pid = uid;
-  }
-
   public String getLogin() {
     return login;
-  }
-
-  public void setLogin(String login) {
-    this.login = login;
   }
 
   public String getPassword() {
     return password;
   }
 
-  public void setPassword(String password) {
-    this.password = password;
+  public Person getPersonId() {
+    return personId;
   }
 }
