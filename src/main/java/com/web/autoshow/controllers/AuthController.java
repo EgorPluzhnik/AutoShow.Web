@@ -125,11 +125,12 @@ public class AuthController {
                     result.put("userId", auth.getPersonId().getId());
                     result.put("login", auth.getLogin());
                     result.put("message", "Authorized");
+                    return result;
                 }
-            } else {
-                result.put("message", "Not Authorized");
             }
         }
+
+        result.put("message", "Not authorized");
 
         return result;
     }
