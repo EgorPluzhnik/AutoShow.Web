@@ -19,10 +19,14 @@ public class AuthDAO {
         return authRepository.existsById(pid);
     }
 
+    // Получить ид по логину и паролю
     public long getPid(String login, String password) {
         List<Auth> auths = new ArrayList<>();
+        // Достаем все зарегистрированные аккаунты
         authRepository.findAll().forEach(auths::add);
         for (Auth auth : auths) {
+            // Если логин и пароль какого-то пользователя равны тем, что были переданы,
+            // то возвращаем его ид.
             if (auth.getLogin().equals(login) && auth.getPassword().equals(password)) {
                 return auth.getPid();
             }
@@ -31,6 +35,7 @@ public class AuthDAO {
         return -1;
     }
 
+    // Добавить зарегистрированный акк в БД.
     public void add(Auth auth) {
         authRepository.save(auth);
     }

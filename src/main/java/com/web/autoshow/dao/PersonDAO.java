@@ -27,12 +27,16 @@ public class PersonDAO {
   }
 
   public List<String> findDuplicateFields(Person person) {
+    // Результаты-сообщения
     List<String> result = new ArrayList<>();
 
     try {
       personRepository.findAll().forEach(p -> {
+        // Если результатов два, то выходим из forEach
+        // (знаю, костыльно, но это самое быстрое решение, что у меня было)
         if (result.size() == 2) throw new EmptyStackException();
 
+        // Если такая почта или номер телефона уже есть, то в результаты добавляется сообщение
         if (p.getEmail().equals(person.getEmail()))
           result.add("This email is already used");
 
@@ -40,7 +44,7 @@ public class PersonDAO {
           result.add("This phone number is already used");
       });
     } catch (EmptyStackException e) {
-      // To end forEach
+      // Чтобы завершить forEach.
     }
 
     return result;
