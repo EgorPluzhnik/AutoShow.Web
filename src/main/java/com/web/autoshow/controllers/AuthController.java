@@ -28,6 +28,8 @@ public class AuthController {
 
     private final AuthDAO authDAO;
     private final PersonDAO personDAO;
+    // Для создания объектов для ответов
+    private HashMap<String, Object> result;
 
     public AuthController(AuthDAO authDAO, PersonDAO personDAO) {
         this.authDAO = authDAO;
@@ -36,26 +38,33 @@ public class AuthController {
 
     // Произвести аутентификацию.
     @PostMapping("/login")
-    public String login(@RequestBody AuthDTO authDTO,
+    public HashMap<String, Object> login(@RequestBody AuthDTO authDTO,
                          HttpServletResponse res,
                          @Autowired AuthUtils authUtils) {
+        result = new HashMap<>();
         // Получаем ид человека по логину и паролю
         long pid = authDAO.getPid(authDTO.getLogin(), authDTO.getPassword());
         // Если ид есть в БД, а то есть человек зарегистрирован, то возвращаем куки, куда по ключу PID
         // задаем зашифрованный ид, используя утилиту cipher из authUtils
         // Также возвращаем сообщение, что человек вошёл
         if (pid != -1) {
-            res.addCookie(new Cookie("PID", authUtils.cipher(pid)));
-            return "Logged in";
-        }
-        return "Wrong login or password";
+            Cookie cookie = new Cookie("PID", authUtils.cipher(pid));
+            cookie.setMaxAge(31536000);
+            res.addCookie(cookie);
+
+            result.put("message", "Logged in");
+            return result;
+        } else result.put("message", "Wrong login or password");
+
+        return result;
     }
 
     // Создать аккаунт
     @PutMapping("/login")
-    public List<String> register(@RequestBody PersonAuthDTO paDTO,
+    public HashMap<String, Object> register(@RequestBody PersonAuthDTO paDTO,
                                  HttpServletResponse res,
                                  @Autowired AuthUtils authUtils) {
+        result = new HashMap<>();
         // Создаем нового пользователя по введённым данным в форму
         Person person = new Person(paDTO.getName(), paDTO.getSurname(), paDTO.getPhoneNumber(),
             paDTO.getEmail(), paDTO.getSex());
@@ -64,35 +73,43 @@ public class AuthController {
         // Если всё-таки были найдены дубликаты, то возвращаем сообщения, что были возвращены из
         // метода findDuplicateFields()
         if (duplicates.size() > 0) {
-            return duplicates;
-        }
-        // Иначе добавляем пользователя в БД
-        personDAO.add(person);
-        // Также добавляем в БД инфу о том, что такой акк зарегистрирован.
-        Auth auth = new Auth(paDTO.getLogin(), paDTO.getPassword(), personDAO.getPerson(person.getId()));
-        authDAO.add(auth);
-        // Возвращаем куки, задавя и шифруя pid.
-        res.addCookie(new Cookie("PID",
-            authUtils.cipher(authDAO.getPid(paDTO.getLogin(), paDTO.getPassword()))));
+            result.put("messages", duplicates);
+        } else {
+            // Иначе добавляем пользователя в БД
+            personDAO.add(person);
+            // Также добавляем в БД инфу о том, что такой акк зарегистрирован.
+            Auth auth = new Auth(paDTO.getLogin(), paDTO.getPassword(), personDAO.getPerson(person.getId()));
+            authDAO.add(auth);
+            // Возвращаем куки, задавя и шифруя pid.
+            Cookie cookie = new Cookie("PID",
+                authUtils.cipher(authDAO.getPid(paDTO.getLogin(), paDTO.getPassword())));
+            cookie.setMaxAge(31536000);
+            res.addCookie(cookie);
 
-        // Тестил коллекции, поэтому заюзал их тут
-        // Думаю, возвращать более ничего не нужно. Эндпоинта /me должно хватить.
-        return new ArrayList<>(Collections.singletonList("Registered"));
+            // Тестил коллекции, поэтому заюзал их тут
+            // Думаю, возвращать более ничего не нужно. Эндпоинта /me должно хватить.
+            result.put("message", "Registered");
+        }
+
+        return result;
     }
 
     // Разлогиниться
     @DeleteMapping("/login")
-    public String logout(HttpServletResponse res) {
+    public HashMap<String, Object> logout(HttpServletResponse res) {
+        result = new HashMap<>();
         // Просто обновляем куки с ключом PID, задавая пустое значение.
         res.addCookie(new Cookie("PID", ""));
-        return "Logged out";
+        result.put("message", "Logged out");
+
+        return result;
     }
 
     // Произвести авторизацию
     @GetMapping("/me")
     public HashMap<String, Object> checkPersonAuth(HttpServletRequest req,
                                    @Autowired AuthUtils authUtils) {
-        HashMap<String, Object> result = new HashMap<>();
+        result = new HashMap<>();
         // Находим саму куку с ключом PID.
         Cookie pidCookie = authUtils.findPidCookie(req.getCookies());
 
@@ -105,16 +122,15 @@ public class AuthController {
                 // Логин, id пользователя
                 Auth auth = authDAO.getAuth(pid);
                 if (auth != null) {
-                    result.put("userId", auth.getPersonId());
+                    result.put("userId", auth.getPersonId().getId());
                     result.put("login", auth.getLogin());
                     result.put("message", "Authorized");
-
-                    return result;
                 }
+            } else {
+                result.put("message", "Not Authorized");
             }
         }
-        
-        result.put("message", "Not Authorized");
+
         return result;
     }
 }
