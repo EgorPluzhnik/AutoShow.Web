@@ -19,6 +19,8 @@ public class Auth {
   @JoinColumn(name = "person_id")
   private Person personId;
 
+  private Boolean admin;
+
   public Auth() {
 
   }
@@ -27,6 +29,7 @@ public class Auth {
     this.login = login;
     this.password = password;
     this.personId = personId;
+    this.admin = false;
   }
 
   public long getPid() {
@@ -44,4 +47,6 @@ public class Auth {
   public Person getPersonId() {
     return personId;
   }
+
+  public Boolean getAdminStatus() { return admin; }
 }

@@ -6,14 +6,10 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "name", "model" }))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "model" }))
 public class Car {
-
   @Id @GeneratedValue
   private long id;
-
-  @Column(length = 50)
-  private String name;
 
   @Column(length = 50)
   private String model;
@@ -24,20 +20,22 @@ public class Car {
   @DateTimeFormat(pattern = "dd/MM/yyyy")
   private Date releaseDate;
 
+  public Car(String model, String description, Date releaseDate) {
+    this.model = model;
+    this.description = description;
+    this.releaseDate = releaseDate;
+  }
+
+  public Car() {
+
+  }
+
   public long getCarId() {
     return id;
   }
 
   public void setCarId(long carId) {
     this.id = carId;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public String getModel() {

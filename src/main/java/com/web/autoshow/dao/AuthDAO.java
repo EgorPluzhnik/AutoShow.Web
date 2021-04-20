@@ -2,6 +2,8 @@ package com.web.autoshow.dao;
 
 import com.web.autoshow.models.Auth;
 import com.web.autoshow.repositories.AuthRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

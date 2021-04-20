@@ -9,6 +9,7 @@ import com.web.autoshow.models.Person;
 import com.web.autoshow.utils.AuthUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
@@ -53,9 +54,11 @@ public class AuthController {
             res.addCookie(cookie);
 
             result.put("message", "Logged in");
+            result.put("resultCode", 1);
             return result;
         } else result.put("message", "Wrong login or password");
 
+        result.put("resultCode", 0);
         return result;
     }
 
@@ -73,6 +76,7 @@ public class AuthController {
         // Если всё-таки были найдены дубликаты, то возвращаем сообщения, что были возвращены из
         // метода findDuplicateFields()
         if (duplicates.size() > 0) {
+            result.put("resultCode", 0);
             result.put("messages", duplicates);
         } else {
             // Иначе добавляем пользователя в БД
@@ -89,6 +93,7 @@ public class AuthController {
             // Тестил коллекции, поэтому заюзал их тут
             // Думаю, возвращать более ничего не нужно. Эндпоинта /me должно хватить.
             result.put("message", "Registered");
+            result.put("resultCode", 1);
         }
 
         return result;
@@ -125,13 +130,20 @@ public class AuthController {
                     result.put("userId", auth.getPersonId().getId());
                     result.put("login", auth.getLogin());
                     result.put("message", "Authorized");
+
+                    if (auth.getAdminStatus()) {
+                        result.put("resultCode", 2);
+                    } else {
+                        result.put("resultCode", 1);
+                    }
+
                     return result;
                 }
             }
         }
 
+        result.put("resultCode", 0);
         result.put("message", "Not authorized");
-
         return result;
     }
 }
