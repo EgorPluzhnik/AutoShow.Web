@@ -31,9 +31,22 @@ public class CarController {
         this.response = response;
     }
 
-    // Получить список всех машин
+    // Получить список N машин
     @GetMapping
-    public HashMap<String, Object> GetAllCarInfo(@Autowired Response response) {
+    public HashMap<String, Object> getWithLimit(@RequestParam int size) {
+        if (size > carDAO.count()) {
+            response.push("message", "The provided size is larger than the amount of cars");
+            response.push("resultCode", 0);
+        } else if (size < 1) {
+            response.push("message", "The provided size must be higher than 0");
+            response.push("resultCode", 0);
+        } else {
+            ArrayList<Car> cars = carDAO.getInAmountOf(size);
+            response.push("cars", cars);
+            response.push("message", "Success");
+            response.push("resultCode", 1);
+        }
+
         return response.getResponse();
     }
 
@@ -65,7 +78,7 @@ public class CarController {
 
     // Получить конкретную машину по её ид
     @GetMapping("/{id}")
-    public HashMap<String, Object> getCarInfo(@PathVariable long id) {
+    public HashMap<String, Object> getSingle(@PathVariable long id) {
         Car car = carDAO.get(id);
         if (car != null) {
             response.push("car", car);

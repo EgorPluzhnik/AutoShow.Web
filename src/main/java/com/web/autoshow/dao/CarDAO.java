@@ -4,6 +4,9 @@ import com.web.autoshow.models.Car;
 import com.web.autoshow.repositories.CarRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicLong;
+
 @Component
 public class CarDAO {
     private final CarRepository carRepo;
@@ -23,5 +26,23 @@ public class CarDAO {
             return carRepo.findById(id).get();
         else
             return null;
+    }
+
+    public long count() {
+        return carRepo.count();
+    }
+
+    public ArrayList<Car> getInAmountOf(long size) {
+        ArrayList<Car> cars = new ArrayList<>();
+        AtomicLong id = new AtomicLong();
+
+        carRepo.findAll().forEach(car -> {
+            if (id.get() < size) {
+                cars.add(car);
+                id.getAndIncrement();
+            }
+        });
+
+        return cars;
     }
 }
