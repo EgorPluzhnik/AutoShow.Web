@@ -17,4 +17,11 @@ public class CarDAO {
             carRepo.save(car);
         }
     }
+
+    public Car get(long id) {
+        if (carRepo.findById(id).isPresent())
+            return carRepo.findById(id).get();
+        else
+            return null;
+    }
 }

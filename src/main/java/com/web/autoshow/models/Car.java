@@ -20,10 +20,13 @@ public class Car {
   @DateTimeFormat(pattern = "dd/MM/yyyy")
   private Date releaseDate;
 
-  public Car(String model, String description, Date releaseDate) {
+  private String image;
+
+  public Car(String model, String description, Date releaseDate, String image) {
     this.model = model;
     this.description = description;
     this.releaseDate = releaseDate;
+    this.image = image;
   }
 
   public Car() {
@@ -56,6 +59,10 @@ public class Car {
 
   public Date getReleaseDate() {
     return releaseDate;
+  }
+
+  public String getImage() {
+    return image;
   }
 
   public void setReleaseDate(Date releaseDate) {

@@ -21,43 +21,61 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/cars")
-@CrossOrigin(origins = "http://localhost:3000/", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class CarController {
+    CarDAO carDAO;
+    Response response;
+
+    public CarController(CarDAO carDAO, Response response) {
+        this.carDAO = carDAO;
+        this.response = response;
+    }
+
     // Получить список всех машин
     @GetMapping
-    public Response GetAllCarInfo(@Autowired Response response) {
-        return response;
+    public HashMap<String, Object> GetAllCarInfo(@Autowired Response response) {
+        return response.getResponse();
     }
 
     // Добавить машину
     @PostMapping
-    public Response addCar(@RequestBody CarDTO carDTO,
+    public HashMap<String, Object> addCar(@RequestBody CarDTO carDTO,
                            @Autowired Response response,
                            AuthDAO authDAO,
                            @Autowired AuthUtils authUtils,
                            HttpServletRequest req,
                            CarDAO carDAO) {
+        // Не тестил
         Cookie pidCookie = authUtils.findPidCookie(req.getCookies());
         if (pidCookie != null && !pidCookie.getValue().equals("")) {
             long pid = authUtils.decipher(pidCookie.getValue());
             Auth auth = authDAO.getAuth(pid);
             if (auth != null && auth.getAdminStatus()) {
-                Car car = new Car(carDTO.getModel(), carDTO.getDescription(), carDTO.getReleaseDate());
+                Car car = new Car(carDTO.getModel(), carDTO.getDescription(), carDTO.getReleaseDate(), "");
                 carDAO.add(car);
                 response.push("resultCode", 1);
-                return response;
+                return response.getResponse();
             }
         }
 
         response.push("resultCode", 0);
         response.push("message", "Not allowed");
-        return response;
+        return response.getResponse();
     }
 
     // Получить конкретную машину по её ид
     @GetMapping("/{id}")
-    public Response getCarInfo(@PathVariable int id, @Autowired Response response) {
-    return response;
+    public HashMap<String, Object> getCarInfo(@PathVariable long id) {
+        Car car = carDAO.get(id);
+        if (car != null) {
+            response.push("car", car);
+            response.push("resultCode", 1);
+        } else {
+            response.push("message", "Not found");
+            response.push("resultCode", 0);
+        }
+
+        return response.getResponse();
     }
 
     // Удалить конкретную машину по ид
