@@ -96,4 +96,19 @@ public class CarController {
     public void deleteCar(@PathVariable int id){
 
     }
+
+    @GetMapping("/search")
+    public HashMap<String, Object> search(@RequestParam String query) {
+        ArrayList<HashMap<String, Object>> cars = carDAO.searchModels(query);
+        if (cars != null) {
+            response.push("cars", cars);
+            response.push("message", "Success");
+            response.push("resultCode", 1);
+        } else {
+            response.push("message", "No matches");
+            response.push("resultCode", 0);
+        }
+
+        return response.getResponse();
+    }
 }

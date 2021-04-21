@@ -18,12 +18,20 @@ public class Show {
 
   @ManyToOne
   @JoinColumn(name = "person_id")
-  private Car personId;
+  private Person personId;
 
   @DateTimeFormat(pattern = "dd/MM/yyyy hh:mm")
   private Date date;
 
-  private int cost;
+  public Show(Car carId, Person personId, Date date) {
+    this.carId = carId;
+    this.personId = personId;
+    this.date = date;
+  }
+
+  public Show() {
+
+  }
 
   public long getId() {
     return id;
@@ -41,11 +49,11 @@ public class Show {
     this.carId = carId;
   }
 
-  public Car getPersonId() {
+  public Person getPersonId() {
     return personId;
   }
 
-  public void setPersonId(Car personId) {
+  public void setPersonId(Person personId) {
     this.personId = personId;
   }
 
@@ -55,13 +63,5 @@ public class Show {
 
   public void setDate(Date date) {
     this.date = date;
-  }
-
-  public int getCost() {
-    return cost;
-  }
-
-  public void setCost(int cost) {
-    this.cost = cost;
   }
 }

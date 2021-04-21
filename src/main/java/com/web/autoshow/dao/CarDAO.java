@@ -5,7 +5,9 @@ import com.web.autoshow.repositories.CarRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class CarDAO {
@@ -44,5 +46,20 @@ public class CarDAO {
         });
 
         return cars;
+    }
+
+    public ArrayList<HashMap<String, Object>> searchModels(String query) {
+        ArrayList<HashMap<String, Object>> array = new ArrayList<>();
+        carRepo.findAll().forEach(car -> {
+            String model = car.getModel();
+            if (model.matches("^" + query + ".*")) {
+                HashMap<String, Object> data = new HashMap<>();
+                data.put("id", car.getCarId());
+                data.put("model", model);
+                array.add(data);
+            }
+        });
+
+        return array;
     }
 }
