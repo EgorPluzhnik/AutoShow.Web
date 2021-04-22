@@ -60,6 +60,9 @@ public class CarDAO {
             }
         });
 
+        if (array.size() == 0)
+            return null;
+
         return array;
     }
 }

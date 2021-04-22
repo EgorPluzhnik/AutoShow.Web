@@ -19,7 +19,7 @@ import java.util.*;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class CarController {
     private final CarDAO carDAO;
-    private final Response response;
+    private Response response;
     private final AuthUtils authUtils;
 
     public CarController(CarDAO carDAO, Response response, AuthUtils authUtils) {
@@ -97,6 +97,7 @@ public class CarController {
     @GetMapping("/search")
     public HashMap<String, Object> search(@RequestParam String query) {
         ArrayList<HashMap<String, Object>> cars = carDAO.searchModels(query);
+        response = new Response();
         if (cars != null) {
             response.push("cars", cars);
             response.push("message", "Success");
