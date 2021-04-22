@@ -1,34 +1,31 @@
 package com.web.autoshow.controllers;
 
-import com.sun.mail.iap.ByteArray;
 import com.web.autoshow.common.Response;
 import com.web.autoshow.dao.AuthDAO;
 import com.web.autoshow.dao.CarDAO;
-import com.web.autoshow.dto.AuthDTO;
 import com.web.autoshow.dto.CarDTO;
 import com.web.autoshow.models.Auth;
 import com.web.autoshow.models.Car;
 import com.web.autoshow.utils.AuthUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @RestController
 @RequestMapping("/cars")
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class CarController {
-    CarDAO carDAO;
-    Response response;
+    private final CarDAO carDAO;
+    private final Response response;
+    private final AuthUtils authUtils;
 
-    public CarController(CarDAO carDAO, Response response) {
+    public CarController(CarDAO carDAO, Response response, AuthUtils authUtils) {
         this.carDAO = carDAO;
         this.response = response;
+        this.authUtils = authUtils;
     }
 
     // Получить список N машин
@@ -55,7 +52,6 @@ public class CarController {
     public HashMap<String, Object> addCar(@RequestBody CarDTO carDTO,
                            @Autowired Response response,
                            AuthDAO authDAO,
-                           @Autowired AuthUtils authUtils,
                            HttpServletRequest req,
                            CarDAO carDAO) {
         // Не тестил
@@ -97,6 +93,7 @@ public class CarController {
 
     }
 
+    // Найти все машины по данному названию
     @GetMapping("/search")
     public HashMap<String, Object> search(@RequestParam String query) {
         ArrayList<HashMap<String, Object>> cars = carDAO.searchModels(query);

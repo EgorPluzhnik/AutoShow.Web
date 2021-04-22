@@ -31,17 +31,18 @@ public class AuthController {
     private final PersonDAO personDAO;
     // Для создания объектов для ответов
     private HashMap<String, Object> result;
+    private final AuthUtils authUtils;
 
-    public AuthController(AuthDAO authDAO, PersonDAO personDAO) {
+    public AuthController(AuthDAO authDAO, PersonDAO personDAO, AuthUtils authUtils) {
         this.authDAO = authDAO;
         this.personDAO = personDAO;
+        this.authUtils = authUtils;
     }
 
     // Произвести аутентификацию.
     @PostMapping("/login")
     public HashMap<String, Object> login(@RequestBody AuthDTO authDTO,
-                         HttpServletResponse res,
-                         @Autowired AuthUtils authUtils) {
+                         HttpServletResponse res) {
         result = new HashMap<>();
         // Получаем ид человека по логину и паролю
         long pid = authDAO.getPid(authDTO.getLogin(), authDTO.getPassword());
@@ -50,13 +51,15 @@ public class AuthController {
         // Также возвращаем сообщение, что человек вошёл
         if (pid != -1) {
             Cookie cookie = new Cookie("PID", authUtils.cipher(pid));
-            cookie.setMaxAge(31536000);
+            cookie.setMaxAge(31536000); // Кука исчезнет через год
             res.addCookie(cookie);
 
             result.put("message", "Logged in");
             result.put("resultCode", 1);
             return result;
-        } else result.put("message", "Wrong login or password");
+        } else {
+            result.put("message", "Wrong login or password");
+        }
 
         result.put("resultCode", 0);
         return result;
