@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class CarDAO {
@@ -46,6 +45,23 @@ public class CarDAO {
         });
 
         return cars;
+    }
+
+    public ArrayList<Car> getInRange(long offset, long limit) {
+        ArrayList<Car> requestedCars = new ArrayList<>();
+        var allCars = carRepo.findAll();
+
+        int counter = 0;
+        long maxIndex = offset + limit - 1;
+        for (Car car: allCars) {
+            if (counter < offset) continue;
+            if (counter > maxIndex) break;
+
+            requestedCars.add(car);
+            counter++;
+        }
+
+        return requestedCars;
     }
 
     public ArrayList<HashMap<String, Object>> searchModels(String query) {

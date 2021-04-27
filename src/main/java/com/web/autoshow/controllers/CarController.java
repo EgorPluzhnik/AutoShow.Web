@@ -47,6 +47,27 @@ public class CarController {
         return response.getResponse();
     }
 
+    @GetMapping
+    public HashMap<String, Object> getWithLimit(@RequestParam int offset,
+                                                @RequestParam int limit) {
+        if (limit > carDAO.count() || offset > carDAO.count()) {
+            response.push("message", "The provided offset and limit is larger than the amount of cars");
+            response.push("resultCode", 0);
+        }
+        else if (limit < 0 || offset < 0) {
+            response.push("message", "The provided offset and limit must be higher than 0");
+            response.push("resultCode", 0);
+        }
+        else {
+            ArrayList<Car> cars = carDAO.getInRange(offset, limit);
+            response.push("cars", cars);
+            response.push("message", "Success");
+            response.push("resultCode", 1);
+        }
+
+        return response.getResponse();
+    }
+
     // Добавить машину
     @PostMapping
     public HashMap<String, Object> addCar(@RequestBody CarDTO carDTO,
