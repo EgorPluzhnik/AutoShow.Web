@@ -30,24 +30,6 @@ public class CarController {
 
     // Получить список N машин
     @GetMapping
-    public HashMap<String, Object> getWithLimit(@RequestParam int size) {
-        if (size > carDAO.count()) {
-            response.push("message", "The provided size is larger than the amount of cars");
-            response.push("resultCode", 0);
-        } else if (size < 1) {
-            response.push("message", "The provided size must be higher than 0");
-            response.push("resultCode", 0);
-        } else {
-            ArrayList<Car> cars = carDAO.getInAmountOf(size);
-            response.push("cars", cars);
-            response.push("message", "Success");
-            response.push("resultCode", 1);
-        }
-
-        return response.getResponse();
-    }
-
-    @GetMapping
     public HashMap<String, Object> getWithLimit(@RequestParam int offset,
                                                 @RequestParam int limit) {
         if (limit > carDAO.count() || offset > carDAO.count()) {

@@ -34,20 +34,6 @@ public class CarDAO {
         return carRepo.count();
     }
 
-    public ArrayList<Car> getInAmountOf(long size) {
-        ArrayList<Car> cars = new ArrayList<>();
-        AtomicLong id = new AtomicLong();
-
-        carRepo.findAll().forEach(car -> {
-            if (id.get() < size) {
-                cars.add(car);
-                id.getAndIncrement();
-            }
-        });
-
-        return cars;
-    }
-
     public ArrayList<Car> getInRange(long offset, long limit) {
         ArrayList<Car> requestedCars = new ArrayList<>();
         var allCars = carRepo.findAll();
