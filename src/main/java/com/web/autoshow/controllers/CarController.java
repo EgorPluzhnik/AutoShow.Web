@@ -110,8 +110,19 @@ public class CarController {
 
     // Удалить конкретную машину по ид
     @DeleteMapping("/{id}")
-    public void deleteCar(@PathVariable int id){
+    public HashMap<String, Object> deleteCar(@PathVariable long id){
+        Boolean isDeleteDone = carDAO.deleteCar(id);
 
+        if (isDeleteDone) {
+            response.push("message", "Deletion was successful");
+            response.push("resultCode", 1);
+        }
+        else {
+            response.push("message", "Car not found");
+            response.push("resultCode", 0);
+        }
+
+        return response.getResponse();
     }
 
     // Найти все машины по данному названию

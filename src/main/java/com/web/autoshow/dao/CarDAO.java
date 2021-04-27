@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
@@ -80,5 +81,15 @@ public class CarDAO {
             return null;
 
         return array;
+    }
+
+    public Boolean deleteCar(long id) {
+        Car carToDelete = get(id);
+        if (carToDelete == null) {
+            return false;
+        }
+
+        carRepo.delete(carToDelete);
+        return true;
     }
 }
